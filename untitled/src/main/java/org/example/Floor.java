@@ -1,17 +1,30 @@
 package org.example;
 
+
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Floor {
-    HashMap<Integer, Station> floorPlan;
-    int fitness;
+    ConcurrentHashMap<Integer, Station> floorPlan;
+    double fitness;
 
-    public Floor(HashMap<Integer, Station> floorPlan) {
+    public Floor(ConcurrentHashMap<Integer, Station> floorPlan) {
         this.floorPlan = floorPlan;
         fitness = calcFit();
     }
 
-    private int calcFit() {
+    private double calcFit() {
+        HashMap<Long, Double> toBeAveraged = new HashMap<>();
+        AtomicLong fitness = new AtomicLong();
 
+        //CLASSIC NESTED FOR LOOP BABY!
+        for (Station n : floorPlan.values()) {
+            for (Station m : floorPlan.values()) {
+
+            }
+        }
     }
+
+
 }

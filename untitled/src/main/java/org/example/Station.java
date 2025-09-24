@@ -4,7 +4,7 @@ package org.example;
 //different stations should be far
 
 public class Station {
-    private int affinity;
+    private final int affinity;
     private int x, y;
 
 /*
@@ -24,8 +24,10 @@ types:
     }
 
 
-    public static double rangeScore(int afScore, double distance) {
-        if (distance < 0) distance = 0;
+    public double getFitness(Station other) {
+
+        int afScore = Math.abs(this.affinity - other.affinity); // find difference in affinity
+        double distance = Math.sqrt((this.x - other.x) * (this.x - other.x) + (this.y - other.y) * (this.y - other.y));
 
         switch (afScore) {
             case 1: // close
