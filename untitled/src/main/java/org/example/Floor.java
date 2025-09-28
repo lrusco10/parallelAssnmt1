@@ -8,7 +8,7 @@ public class Floor {
     ConcurrentHashMap<coordinate, Station> floorPlan = new ConcurrentHashMap<>();
     int xMax;
     int yMax;
-    double fitness;
+    int fitness;
 
     public Floor(int stations, int xMax, int yMax) {
         Random rand = new Random();
@@ -56,5 +56,7 @@ public class Floor {
         return fit;
     }
 
-
+    public int getFitness() {
+        return fitness;
+    }
 }

@@ -5,7 +5,7 @@ package org.example;
 
 public class Station {
     private final int type;
-    private int x, y;
+    private coordinate cord;
 
 /*
 types:
@@ -21,19 +21,20 @@ types:
  */
     public Station(int type, int x, int y) {
         this.type = type;
-        this.x = x;
-        this.y = y;
+        this.cord = new coordinate(x, y);
     }
 
     public int getType() {
         return type;
     }
 
+    public coordinate getCord() {return cord;}
+
     public int getX() {
-        return x;
+        return cord.x;
     }
 
     public int getY() {
-        return y;
+        return cord.y;
     }
 }
