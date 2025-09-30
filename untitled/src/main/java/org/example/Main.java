@@ -2,6 +2,7 @@ package org.example;
 
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -25,10 +26,9 @@ public class Main {
             Floor temp = new Floor(stations, maxX, maxY);
             map.put(UUID.randomUUID().toString(), temp);
         }
-        ExecutorService executorService = Executors.newFixedThreadPool(map.size());
 
-
-        for (int i = 0; i < maxRounds; i++) {
+        for (int i = 0; i < maxRounds; i++) { //computationally expensive, but I don't expect THAT many rounds....
+            ExecutorService executorService = Executors.newFixedThreadPool(map.size());
 
 
             //selection phase
@@ -42,25 +42,42 @@ public class Main {
             //crossover phase
             //pick a random pair of floors and make children
             ArrayList<String> refs = new ArrayList<>(map.keySet().stream().toList());
+            List<Future<?>> futures = new ArrayList<>();
             LinkedBlockingQueue<Floor> children = new LinkedBlockingQueue<>();
             while (!refs.isEmpty()) {
                 Floor choice1 = map.get(refs.remove(rand.nextInt(refs.size())));
                 Floor choice2 = map.get(refs.remove(rand.nextInt(refs.size())));
-                executorService.submit(new crossover(children, choice1, choice2));
+                futures.add(executorService.submit(new crossover(children, choice1, choice2)));
             }
-            //dump the children into the map
-            for (Floor c : children) {
-                map.put(UUID.randomUUID().toString(), c);
+            // Wait for all tasks to complete
+            for (Future<?> future : futures) {
+                try {
+                    future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
             }
 
 
             //mutation phase
             //mutate random unfit stations in remaining bunch.
             for (Floor f : map.values()) {
-                executorService.submit(new mutation(f));
+                futures.add(executorService.submit(new mutation(f)));
             }
-        }
+            for (Future<?> future : futures) {
+                try {
+                    future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
 
-        executorService.shutdown();
+
+            //dump the children into the map
+            for (Floor c : children) {
+                map.put(UUID.randomUUID().toString(), c);
+            }
+            executorService.shutdown();
+        }
     }
 }
