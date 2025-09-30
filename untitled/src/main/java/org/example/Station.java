@@ -4,25 +4,28 @@ package org.example;
 //different stations should be far
 
 public class Station {
-    private final int type;
+    private int type;
     private coordinate cord;
+    private boolean isfit;
 
 /*
-types:
-    1:  is green, aff = 1
-    2: is red, aff = 2
-    3: is blue, aff = 3
-    4: is yellow, aff = 4
-    green should be closest to red and furthest from yellow
-    red should be closest to green or blue, but furthest from yellow
-    blue should be closest to red or yellow, but furthest from green
-    yellow should be closest to blue but furthest from green
-    distance is calculated via Euclidean operation.
+affinity by quadrant:
+type 1 : q1
+type 2 : q2
+...and so on
+
+also, affinity +1 if adjacent to any number of stations
+
+thus, maxAffinity = 2 * #stations
  */
     public Station(int type, int x, int y) {
         this.type = type;
         this.cord = new coordinate(x, y);
+        this.isfit = false; //just the default.
     }
+    public void setFit(boolean b) {isfit = b;}
+
+    public boolean getFit() {return isfit;}
 
     public int getType() {
         return type;
@@ -36,5 +39,13 @@ types:
 
     public int getY() {
         return cord.y;
+    }
+
+    public void changeType(int type) {
+        this.type = type;
+    }
+
+    public void changePosition(coordinate cord) {
+        this.cord = cord;
     }
 }

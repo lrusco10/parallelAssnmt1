@@ -25,18 +25,19 @@ public class Floor {
             }
             floorPlan.put(cord, new Station(rand.nextInt(1,5), x, y));
         }
-        fitness = calcFit();
+        calcFit();
+        stationCount = stations;
     }
 
     public Floor(int xMax, int yMax) {
         this.xMax = xMax;
         this.yMax = yMax;
-        fitness = calcFit();
+        calcFit();
     }
 
     //need to change this so fitness is calculated with adjacent stations as well.
     //this means maxfitness is double that of its prior value.
-    private int calcFit() {
+    public void calcFit() {
         int fit = 0;
         for (Station s : floorPlan.values()) {
             switch (s.getType()) {
@@ -44,25 +45,29 @@ public class Floor {
                     //upper left quadrant
                     if (s.getX() < (xMax/2) && s.getY() > (yMax/2)) {
                         fit++;
+                        s.setFit(true);
                     }
                 case 2:
                     //upper left quadrant
                     if (s.getX() > (xMax/2) && s.getY() > (yMax/2)) {
                         fit++;
+                        s.setFit(true);
                     }
                 case 3:
                     //upper left quadrant
                     if (s.getX() < (xMax/2) && s.getY() < (yMax/2)) {
                         fit++;
+                        s.setFit(true);
                     }
                 case 4:
                     //upper left quadrant
                     if (s.getX() > (xMax/2) && s.getY() < (yMax/2)) {
                         fit++;
+                        s.setFit(true);
                     }
             }
         }
-        return fit;
+        fitness = fit;
     }
 
     public int getFitness() {

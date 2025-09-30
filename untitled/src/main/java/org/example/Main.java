@@ -25,7 +25,6 @@ public class Main {
             Floor temp = new Floor(stations, maxX, maxY);
             map.put(UUID.randomUUID().toString(), temp);
         }
-        Phaser phaser = new Phaser(map.size());
         ExecutorService executorService = Executors.newFixedThreadPool(map.size());
 
 
@@ -41,25 +40,27 @@ public class Main {
 
 
             //crossover phase
-            //pick a random pair of floors and make children ( ͡° ͜ʖ ͡°)
+            //pick a random pair of floors and make children
             ArrayList<String> refs = new ArrayList<>(map.keySet().stream().toList());
             LinkedBlockingQueue<Floor> children = new LinkedBlockingQueue<>();
             while (!refs.isEmpty()) {
                 Floor choice1 = map.get(refs.remove(rand.nextInt(refs.size())));
                 Floor choice2 = map.get(refs.remove(rand.nextInt(refs.size())));
-                Thread task = new Thread(new crossover(children, choice1, choice2));
-                task.start();
+                executorService.submit(new crossover(children, choice1, choice2));
             }
             //dump the children into the map
             for (Floor c : children) {
                 map.put(UUID.randomUUID().toString(), c);
             }
 
+
             //mutation phase
             //mutate random unfit stations in remaining bunch.
-
-            //take average, reevaluate floormap.
-
+            for (Floor f : map.values()) {
+                executorService.submit(new mutation(f));
+            }
         }
+
+        executorService.shutdown();
     }
 }
