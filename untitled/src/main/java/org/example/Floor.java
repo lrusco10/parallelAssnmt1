@@ -9,6 +9,7 @@ public class Floor {
     int xMax;
     int yMax;
     int fitness;
+    int stationCount;
 
     public Floor(int stations, int xMax, int yMax) {
         Random rand = new Random();
@@ -27,6 +28,14 @@ public class Floor {
         fitness = calcFit();
     }
 
+    public Floor(int xMax, int yMax) {
+        this.xMax = xMax;
+        this.yMax = yMax;
+        fitness = calcFit();
+    }
+
+    //need to change this so fitness is calculated with adjacent stations as well.
+    //this means maxfitness is double that of its prior value.
     private int calcFit() {
         int fit = 0;
         for (Station s : floorPlan.values()) {
@@ -58,5 +67,17 @@ public class Floor {
 
     public int getFitness() {
         return fitness;
+    }
+
+    public int getStationCount() {
+        return stationCount;
+    }
+
+    public int getxMax() {
+        return xMax;
+    }
+
+    public int getyMax() {
+        return yMax;
     }
 }
