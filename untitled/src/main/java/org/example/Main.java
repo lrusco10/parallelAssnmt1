@@ -30,17 +30,17 @@ public class Main {
         for (int i = 0; i < maxRounds; i++) { //computationally expensive, but I don't expect THAT many rounds....
             ExecutorService executorService = Executors.newFixedThreadPool(map.size());
 
-
             //selection phase
             //Take most fit floorplans
             double avg = map.values().stream()
                     .mapToInt(Floor::getFitness)
                     .average().orElse(0.0);
             map.values().removeIf(f -> f.getFitness() < avg);
-
+            System.out.println("Fitness of most fit floor: " + map.values().stream().mapToInt(Floor::getFitness).max());
 
             //crossover phase
             //pick a random pair of floors and make children
+            //DEADLOCK PROBLEM:: NEED TO INPUT A CHOICE FOR INSTANCES WHERE THERE IS ONLY ONE REF LEFT
             ArrayList<String> refs = new ArrayList<>(map.keySet().stream().toList());
             List<Future<?>> futures = new ArrayList<>();
             LinkedBlockingQueue<Floor> children = new LinkedBlockingQueue<>();

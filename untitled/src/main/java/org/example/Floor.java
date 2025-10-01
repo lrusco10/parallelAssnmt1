@@ -46,28 +46,56 @@ public class Floor {
                     if (s.getX() < (xMax/2) && s.getY() > (yMax/2)) {
                         fit++;
                         s.setFit(true);
+                        if (findAdjacent(s)) {
+                            fit++;
+                        }
                     }
                 case 2:
                     //upper left quadrant
                     if (s.getX() > (xMax/2) && s.getY() > (yMax/2)) {
                         fit++;
                         s.setFit(true);
+                        if (findAdjacent(s)) {
+                            fit++;
+                        }
                     }
                 case 3:
                     //upper left quadrant
                     if (s.getX() < (xMax/2) && s.getY() < (yMax/2)) {
                         fit++;
                         s.setFit(true);
+                        if (findAdjacent(s)) {
+                            fit++;
+                        }
                     }
                 case 4:
                     //upper left quadrant
                     if (s.getX() > (xMax/2) && s.getY() < (yMax/2)) {
                         fit++;
                         s.setFit(true);
+                        if (findAdjacent(s)) {
+                            fit++;
+                        }
                     }
             }
         }
         fitness = fit;
+    }
+
+    private boolean findAdjacent(Station s) {
+        if (floorPlan.containsKey(s.getCord().getUp())) {
+            return true;
+        }
+        else if (floorPlan.containsKey(s.getCord().getDown())) {
+            return true;
+        }
+        else if (floorPlan.containsKey(s.getCord().getLeft())) {
+            return true;
+        }
+        else if (floorPlan.containsKey(s.getCord().getRight())) {
+            return true;
+        }
+        else {return false;}
     }
 
     public int getFitness() {

@@ -8,16 +8,17 @@ public class coordinate {
         this.y = y;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        coordinate that = (coordinate) o;
-        return x == that.x && y == that.y;
+    public coordinate getUp() {
+        return new coordinate(x, y+1);
+    }
+    public coordinate getDown() {
+        return new coordinate(x, y-1);
+    }
+    public coordinate getLeft() {
+        return new coordinate(x-1, y);
+    }
+    public coordinate getRight() {
+        return new coordinate(x+1, y+1);
     }
 
-    @Override
-    public int hashCode() {
-        return 31 * x + y;
-    }
 }
