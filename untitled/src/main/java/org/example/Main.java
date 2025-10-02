@@ -12,10 +12,10 @@ public class Main {
 
         final int startfloors = 50;
         final int stations = 50;
-        final int maxX = 100;
-        final int maxY = 100;
+        final int maxX = 50;
+        final int maxY = 50;
         final int maxFit = stations; //for clarity
-        final int maxRounds = 100;
+        final int maxRounds = 30;
         final Random rand = new Random();
 
 
@@ -27,24 +27,28 @@ public class Main {
             map.put(UUID.randomUUID().toString(), temp);
         }
 
+        System.out.println("Max fitness of a Floor: " + maxFit);
         for (int i = 0; i < maxRounds; i++) { //computationally expensive, but I don't expect THAT many rounds....
             ExecutorService executorService = Executors.newFixedThreadPool(map.size());
+            System.out.println(map.size());
 
             //selection phase
             //Take most fit floorplans
             double avg = map.values().stream()
                     .mapToInt(Floor::getFitness)
                     .average().orElse(0.0);
-            map.values().removeIf(f -> f.getFitness() < avg);
-            System.out.println("Fitness of most fit floor: " + map.values().stream().mapToInt(Floor::getFitness).max());
+            map.values().removeIf(f -> f.getFitness() < avg*.9);
+            System.out.println("Round " + i + ": Fitness of most fit floor-- " + map.values().stream()
+                    .map(Floor::getFitness)
+                    .max(Integer::compareTo)
+                    .orElseThrow(() -> new RuntimeException("no values in map")));
 
             //crossover phase
             //pick a random pair of floors and make children
-            //DEADLOCK PROBLEM:: NEED TO INPUT A CHOICE FOR INSTANCES WHERE THERE IS ONLY ONE REF LEFT
             ArrayList<String> refs = new ArrayList<>(map.keySet().stream().toList());
             List<Future<?>> futures = new ArrayList<>();
             LinkedBlockingQueue<Floor> children = new LinkedBlockingQueue<>();
-            while (!refs.isEmpty()) {
+            while (refs.size() >= 2) {
                 Floor choice1 = map.get(refs.remove(rand.nextInt(refs.size())));
                 Floor choice2 = map.get(refs.remove(rand.nextInt(refs.size())));
                 futures.add(executorService.submit(new crossover(children, choice1, choice2)));

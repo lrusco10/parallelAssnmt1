@@ -1,7 +1,6 @@
 package org.example;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class crossover implements Runnable{
@@ -44,11 +43,11 @@ public class crossover implements Runnable{
             }
 
         }
-
-        //child is populated-- now check fitness:
-        if (child.fitness >= supFloor.fitness && child.fitness >= subFloor.fitness) {
-            children.add(child);
-        }
+        children.add(child);
+        //child is populated-- now check fitness: may be too accurate for a genetic algorithm...
+//        if (child.fitness >= supFloor.fitness && child.fitness >= subFloor.fitness) {
+//            children.add(child);
+//        }
 
     }
 }
