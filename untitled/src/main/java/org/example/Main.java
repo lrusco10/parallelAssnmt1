@@ -1,6 +1,7 @@
 package org.example;
 
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -27,21 +28,53 @@ public class Main {
             map.put(UUID.randomUUID().toString(), temp);
         }
 
-        System.out.println("Max fitness of a Floor: " + maxFit);
-        for (int i = 0; i < maxRounds; i++) { //computationally expensive, but I don't expect THAT many rounds....
-            ExecutorService executorService = Executors.newFixedThreadPool(map.size());
-            System.out.println(map.size());
+        //initialize GUI ops
+        JFrame frame = new JFrame("Factory Floor");
+        List<GridSquare> squares = new ArrayList<>();
+        ColoredGridPanel panel = new ColoredGridPanel(maxX, maxY, 10, squares);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(panel);
+        frame.pack();
+        frame.setVisible(true);
+        ExecutorService executorService = Executors.newFixedThreadPool(map.size()*2);
 
+
+        for (int i = 0; i < maxRounds; i++) { //computationally expensive, but I don't expect THAT many rounds....
             //selection phase
             //Take most fit floorplans
             double avg = map.values().stream()
                     .mapToInt(Floor::getFitness)
                     .average().orElse(0.0);
             map.values().removeIf(f -> f.getFitness() < avg*.9);
-            System.out.println("Round " + i + ": Fitness of most fit floor-- " + map.values().stream()
-                    .map(Floor::getFitness)
-                    .max(Integer::compareTo)
-                    .orElseThrow(() -> new RuntimeException("no values in map")));
+
+            //grab the current best floor
+            int max = 0;
+            Floor currentBest = null;
+            for (Floor f : map.values()) {
+                if (f.getFitness() > max) {
+                    max = f.getFitness();
+                    currentBest = f;
+                }
+            }
+            System.out.println("Round " + i + ": Best Fitness: " + currentBest.fitness + " Number of Floors: " + map.size());
+            //make a panel in accordance with the best Floor
+            squares.clear();
+            if (currentBest != null) {
+                synchronized (squares) {
+                    for (Station s : currentBest.floorPlan.values()) {
+                        squares.add(new GridSquare(s.getX(), s.getY(), s.getType()));
+                    }
+                }
+            }
+
+            //now display that panel:
+            panel.repaint();
+            try {
+                Thread.sleep(500); // 0.5 second per round
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
 
             //crossover phase
             //pick a random pair of floors and make children
@@ -81,7 +114,6 @@ public class Main {
             for (Floor c : children) {
                 map.put(UUID.randomUUID().toString(), c);
             }
-            executorService.shutdown();
         }
     }
 }
